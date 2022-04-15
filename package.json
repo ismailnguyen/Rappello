@@ -1,0 +1,26 @@
+{
+  "name": "rappello",
+  "version": "1.0.0",
+  "description": "Send email alert each time a product recall is made by French Government",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ismailnguyen/Rappello.git"
+  },
+  "author": "Ismaïl NGUYEN <nguyen.ismail@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ismailnguyen/Rappello/issues"
+  },
+  "homepage": "https://github.com/ismailnguyen/Rappello#readme",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "fast-xml-parser": "^4.0.7",
+    "nodemailer": "^6.7.3"
+  }
+}
