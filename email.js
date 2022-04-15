@@ -22,6 +22,6 @@ exports.sendEmail = function (mail, success, failure) {
         to: mail.recipient,
         subject: mail.subject,
         html: mail.content
-    }).then(result => success(result))
+    }).then(result => success('Mail sent to ' + mail.recipient))
     .catch((error) => failure(error))
 }
