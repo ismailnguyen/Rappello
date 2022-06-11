@@ -5,11 +5,14 @@ on:
   schedule:
     # Runs "everyday at 5:02pm" (see https://crontab.guru)
     - cron: '02 17 * * *'
+
 jobs:
   build:
     name: Trigger Notification Call
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: cURL request
         # Hit the webhook endpoint to rebuild  from the "main" branch
         run: curl -X GET ${{ secrets.BASE_URL }}/notify?email=${{ secrets.USER_EMAIL }}
+      - uses: gautamkrishnar/keepalive-workflow@master # step to keep alive the cron action
