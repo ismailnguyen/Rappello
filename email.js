@@ -17,7 +17,7 @@ exports.sendEmail = async function (mail, success, failure) {
         }
     })
 
-    console.log('EXPEDITOR_EMAIL', EXPEDITOR_EMAIL)
+    console.log('EXPEDITOR_EMAIL', SMTP_PORT, SMTP_HOST, EXPEDITOR_PASSWORD)
 
     try {
         const result = await transporter.sendMail({
@@ -26,6 +26,8 @@ exports.sendEmail = async function (mail, success, failure) {
             subject: mail.subject,
             html: mail.content
         })
+
+        console.log('result mail', result, mail)
     
         success('Mail sent to ' + mail.recipient)
     }
