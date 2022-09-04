@@ -1,5 +1,9 @@
 const controller = require('../../controller')
 
+const axios = require('axios')
+const { XMLParser } = require('fast-xml-parser');
+const xmlParser = new XMLParser();
+
 const nodemailer = require('nodemailer')
 
 const {
@@ -21,30 +25,59 @@ const transporter = nodemailer.createTransport({
 exports.handler = async function (event, context) {
     let body = '';
 
-    const mail = {
-        recipient: event.queryStringParameters.email,
-        subject: 'toto',//data.title,
-        content: 'test'//data.content
-    };
-
     try {
-        const result = await transporter.sendMail({
-            from: EXPEDITOR_EMAIL,
-            to: mail.recipient,
-            subject: mail.subject,
-            html: mail.content
-        })
+        const res = await axios.get('https://rappel.conso.gouv.fr/rss')
 
-        console.log('result mail', result, mail)
-    
-        body = 'Mail sent to ' + mail.recipient;
-    }
-    catch(error) {
-        return {
-            statusCode: 410,
-            body: error
+        if (!res || !res.data) {
+            body = 'Error: Unable to fetch the RSS feed or empty data'
+            return
         }
+
+        const data = xmlParser.parse(res.data)
+
+        if (!data || !data.rss || !data.rss.channel || !data.rss.channel.item) {
+            body = 'Error: Unable to parse the RSS feed'
+            return
+        }
+
+        const { title, item } = data.rss.channel
+
+        if (!title || !item || !item.length) {
+            body = 'Error: RSS feed is empty'
+            return
+        }
+
+        const mail = {
+            recipient: event.queryStringParameters.email,
+            subject: title,
+            content: item.map(item => `
+                <a href="${ item.link }"><b>${ item.title }</b></a>:
+                <br>
+                <small>${ item.description }</small>
+            `).join('<br><br>')
+        };
+    
+        try {
+            const result = await transporter.sendMail({
+                from: EXPEDITOR_EMAIL,
+                to: mail.recipient,
+                subject: mail.subject,
+                html: mail.content
+            })
+    
+            console.log('result mail', result, mail)
+        
+            body = 'Mail sent to ' + mail.recipient;
+        }
+        catch(error) {
+            body = error;
+        }
+    } catch (error) {
+        body = error;
+
     }
+
+    
 
     return {
         statusCode: 200,
