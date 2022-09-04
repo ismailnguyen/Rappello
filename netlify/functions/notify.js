@@ -29,5 +29,5 @@ exports.handler = async function (event, context) {
           statusCode: 422,
           body: `Error: ${error}`
         }
-      }
+      })
 };
