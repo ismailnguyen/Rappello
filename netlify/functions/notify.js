@@ -40,7 +40,10 @@ exports.handler = async function (event, context) {
         body = 'Mail sent to ' + mail.recipient;
     }
     catch(error) {
-        failure(error)
+        return {
+            statusCode: 410,
+            body: error
+        }
     }
 
     return {
