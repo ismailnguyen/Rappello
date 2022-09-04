@@ -10,13 +10,11 @@ exports.notify = async function (email) {
         let rss = await fetchRss()
     
         try {
-            let mailSentResult = await sendEmail({
+            return await sendEmail({
                 recipient: email,
                 subject: rss.title,
                 content: rss.content
             })
-        
-             return response.send(mailSentResult)
         }
         catch (error) {
             throw error
