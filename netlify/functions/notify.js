@@ -37,7 +37,7 @@ exports.handler = async function (event, context) {
 
         console.log('result mail', result, mail)
     
-        success('Mail sent to ' + mail.recipient)
+        body = 'Mail sent to ' + mail.recipient;
     }
     catch(error) {
         failure(error)
