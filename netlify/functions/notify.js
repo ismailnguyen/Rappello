@@ -21,13 +21,13 @@ exports.handler = async function (event, context) {
     const axios = require('axios')
     axios
     .get('https://rappel.conso.gouv.fr/rss')
-    .then((response) => { return console.log(response.data) })
-  .catch((error) => { return console.log(error) })
-    
-    controller.notify(request, response);
-
-    return {
-        statusCode: 200,
-        body: body
-    }
+    .then(function (response) {
+        return JSON.stringify(response.data)
+      })
+      .catch(function (error) {
+        return {
+          statusCode: 422,
+          body: `Error: ${error}`
+        }
+      }
 };
