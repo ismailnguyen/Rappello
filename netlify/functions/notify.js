@@ -1,4 +1,3 @@
-const req = require('express/lib/request');
 const controller = require('../../controller')
 
 exports.handler = async function (event, context) {
@@ -16,8 +15,6 @@ exports.handler = async function (event, context) {
             console.log('result', result);
         }
     };
-
-    console.log('request', request);
     
     controller.notify(request, response);
 

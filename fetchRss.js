@@ -3,6 +3,8 @@ const { XMLParser } = require('fast-xml-parser');
 const xmlParser = new XMLParser();
 
 exports.fetchRss = function (success, failure) {
+    console.log('enter inside fetchRss');
+
     axios
     .get('https://rappel.conso.gouv.fr/rss')
     .then(res => {

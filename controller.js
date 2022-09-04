@@ -9,6 +9,8 @@ exports.notify = function (request, response) {
         return
     }
 
+    console.log('enter inside notify');
+
     fetchRss(
         (data) => sendEmail(
             {
