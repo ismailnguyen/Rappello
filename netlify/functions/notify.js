@@ -22,9 +22,11 @@ exports.handler = async function (event, context) {
     axios
     .get('https://rappel.conso.gouv.fr/rss')
     .then(function (response) {
+        console.log('success')
         return JSON.stringify(response.data)
       })
       .catch(function (error) {
+        console.log('error')
         return {
           statusCode: 422,
           body: `Error: ${error}`
