@@ -1,7 +1,7 @@
 const { fetchRss } = require('./fetchRss')
 const { sendEmail } = require('./email')
 
-exports.notify = function (request, response) {
+exports.notify = async function (request, response) {
     const email = request.query.email;
 
     if (!email) {
@@ -9,8 +9,8 @@ exports.notify = function (request, response) {
         return
     }
 
-    fetchRss(
-        (data) => sendEmail(
+    await fetchRss(
+        async (data) => await sendEmail(
             {
                 recipient: email,
                 subject: data.title,

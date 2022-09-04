@@ -15,15 +15,11 @@ exports.handler = async function (event, context) {
             console.log('result', result);
         }
     };
+    
+    await controller.notify(request, response);
 
-
-        console.log('calling axios from start point')
-    const axios = require('axios')
-    const resp = await axios.get('https://rappel.conso.gouv.fr/rss')
-      console.log(resp.data);
-
-      return {
+    return {
         statusCode: 200,
-        body: JSON.stringify({ message: resp.data }),
-      };
+        body: body
+    }
 };
