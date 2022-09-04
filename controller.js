@@ -1,24 +1,26 @@
 const { fetchRss } = require('./fetchRss')
 const { sendEmail } = require('./email')
 
-exports.notify = function (request, response) {
-    const email = request.query.email;
-
+exports.notify = async function (email) {
     if (!email) {
-        response.send('Please provide an email')
-        return
+        throw 'Please provide an email'
     }
 
-    fetchRss(
-        (data) => sendEmail(
-            {
+    try {
+        let rss = await fetchRss()
+    
+        try {
+            return await sendEmail({
                 recipient: email,
-                subject: data.title,
-                content: data.content
-            },
-            (mailSendResult) => response.send(mailSendResult),
-            (failure) => response.send(failure)
-        ),
-        (failure) => response.send(failure)
-    )
+                subject: rss.title,
+                content: rss.content
+            })
+        }
+        catch (error) {
+            throw error
+        }
+    }
+    catch (error) {
+        throw error
+    }
 }

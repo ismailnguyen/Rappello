@@ -7,7 +7,7 @@ const {
     SMTP_PORT
 } = require('./config')
 
-exports.sendEmail = function (mail, success, failure) {
+exports.sendEmail = async function (mail) {
     const transporter = nodemailer.createTransport({
         host: SMTP_HOST,
         port: SMTP_PORT,
@@ -17,11 +17,17 @@ exports.sendEmail = function (mail, success, failure) {
         }
     })
 
-    transporter.sendMail({
-        from: EXPEDITOR_EMAIL,
-        to: mail.recipient,
-        subject: mail.subject,
-        html: mail.content
-    }).then(result => success('Mail sent to ' + mail.recipient))
-    .catch((error) => failure(error))
+    try {
+        await transporter.sendMail({
+            from: EXPEDITOR_EMAIL,
+            to: mail.recipient,
+            subject: mail.subject,
+            html: mail.content
+        })
+
+        return 'Mail sent to ' + mail.recipient
+    }
+    catch(error) {
+        throw (error)
+    }
 }
