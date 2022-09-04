@@ -17,15 +17,13 @@ exports.handler = async function (event, context) {
     };
 
 
-        console.log('calling sendEmail from start point')
-        const { sendEmail } = require('../../email')
-        sendEmail(
-            {
-                recipient: request.query.email,
-                subject: 'data.title',
-                content: 'data.content'
-            },
-            (mailSendResult) => console.log(mailSendResult),
-            (failure) => console.log(failure)
-        )
+        console.log('calling axios from start point')
+    const axios = require('axios')
+    const resp = await axios.get('https://rappel.conso.gouv.fr/rss')
+      console.log(resp.data);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ message: resp.data }),
+      };
 };
