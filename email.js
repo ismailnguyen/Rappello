@@ -17,6 +17,8 @@ exports.sendEmail = function (mail, success, failure) {
         }
     })
 
+    console.log('EXPEDITOR_EMAIL', EXPEDITOR_EMAIL)
+
     transporter.sendMail({
         from: EXPEDITOR_EMAIL,
         to: mail.recipient,

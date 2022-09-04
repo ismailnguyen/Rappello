@@ -11,6 +11,8 @@ exports.fetchRss = function (success, failure) {
             return;
         }
 
+        console.log('rss res', res);
+
         const data = xmlParser.parse(res.data);
 
         if (!data || !data.rss || !data.rss.channel || !data.rss.channel.item) {
