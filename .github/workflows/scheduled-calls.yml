@@ -19,4 +19,4 @@ jobs:
           curl -sS -X GET \
             -H "x-api-key: ${{ secrets.API_KEY }}" \
             "${{ secrets.BASE_URL }}/notify?email=${{ secrets.USER_EMAIL }}"
-      - uses: gautamkrishnar/keepalive-workflow@master # step to keep alive the cron action
+      - uses: gautamkrishnar/keepalive-workflow@v2 # step to keep alive the cron action
