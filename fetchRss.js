@@ -22,14 +22,25 @@ exports.fetchRss = async function () {
             throw 'Error: RSS feed is empty'
         }
 
-        return {
-            title: title,
-            content: item.map(item => `
-                <a href="${ item.link }"><b>${ item.title }</b></a>:
+        const items = item.map(it => {
+            const guid = it.guid && (typeof it.guid === 'string' ? it.guid : (it.guid['#text'] || it.guid.text));
+            const pubDate = it.pubDate ? new Date(it.pubDate) : undefined;
+            return {
+                id: guid || it.link || it.title,
+                title: it.title,
+                link: it.link,
+                description: it.description,
+                pubDate: pubDate ? pubDate.toISOString() : undefined
+            };
+        });
+
+        const content = items.map(it => `
+                <a href="${ it.link }"><b>${ it.title }</b></a>:
                 <br>
-                <small>${ item.description }</small>
+                <small>${ it.description }</small>
             `).join('<br><br>')
-        }
+
+        return { title, items, content }
     } catch (error) {
         throw error
     }

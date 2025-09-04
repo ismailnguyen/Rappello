@@ -11,6 +11,7 @@ Send a mail summary of the latest product recalls published by the French govern
   - Local Express endpoint: `GET /notify?email=<recipient>`
   - Netlify Function endpoint: `/.netlify/functions/notify?email=<recipient>`
   - Secured by API key via header `x-api-key` (or `?api_key=`)
+  - Only sends items published today (based on RSS `pubDate`).
 
 ## Architecture
 
@@ -70,7 +71,7 @@ Notes:
    - `curl -H "x-api-key: $API_KEY" "http://localhost:3000/notify?email=recipient@example.com"`
 
 Response behavior:
-- The Express route now awaits the send and returns `{ message: "Mail sent to recipient@example.com" }` on success.
+- The Express route now awaits the send and returns `{ message: "Mail sent to recipient@example.com" }` on success. If no new items for today, returns the message `No new recalls for today` without sending an email.
 
 ## Netlify Function
 
@@ -86,6 +87,7 @@ Deploying:
 
 Response behavior:
 - The Netlify function awaits the email send and returns a body like `"Mail sent to recipient@example.com"` on success.
+ - If no new items for today, returns `No new recalls for today`.
 
 ## Scheduling (Optional)
 
