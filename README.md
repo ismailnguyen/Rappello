@@ -10,6 +10,7 @@ Send a mail summary of the latest product recalls published by the French govern
 - Two runtimes supported:
   - Local Express endpoint: `GET /notify?email=<recipient>`
   - Netlify Function endpoint: `/.netlify/functions/notify?email=<recipient>`
+  - Secured by API key via header `x-api-key` (or `?api_key=`)
 
 ## Architecture
 
@@ -49,6 +50,9 @@ SMTP_PORT=587
 
 # Local server port for Express
 PORT=3000
+
+# API key used to authorize requests
+API_KEY=your-strong-random-key
 ```
 
 Notes:
@@ -63,11 +67,10 @@ Notes:
 
 2) Trigger an email:
 
-   - `curl "http://localhost:3000/notify?email=recipient@example.com"`
+   - `curl -H "x-api-key: $API_KEY" "http://localhost:3000/notify?email=recipient@example.com"`
 
 Response behavior:
-- The Express route triggers the email send and returns a 200 immediately. The actual send runs asynchronously in the background.
-- If you need a synchronous confirmation payload, use the Netlify Function endpoint or adapt the Express handler to `await` the controller.
+- The Express route now awaits the send and returns `{ message: "Mail sent to recipient@example.com" }` on success.
 
 ## Netlify Function
 
@@ -75,10 +78,11 @@ This repo includes a function at `netlify/functions/notify.js` that wraps the sa
 
 Deploying:
 - Configure your site in Netlify and set the Functions directory to `netlify/functions` (either via Netlify UI or `netlify.toml`).
-- Add the required environment variables (same keys as `.env`) in your Netlify site settings.
+- Add the required environment variables (same keys as `.env`) in your Netlify site settings, including `API_KEY`.
 - After deploy, invoke:
 
-  - `https://<your-site>.netlify.app/.netlify/functions/notify?email=recipient@example.com`
+  - With header: `curl -H "x-api-key: $API_KEY" "https://<your-site>.netlify.app/.netlify/functions/notify?email=recipient@example.com"`
+  - Or query param: `https://<your-site>.netlify.app/.netlify/functions/notify?email=recipient@example.com&api_key=$API_KEY`
 
 Response behavior:
 - The Netlify function awaits the email send and returns a body like `"Mail sent to recipient@example.com"` on success.
@@ -87,23 +91,29 @@ Response behavior:
 
 Rappello sends on demand. To send a daily digest, pair it with a scheduler:
 - Netlify Scheduled Functions (cron) if available on your plan.
-- GitHub Actions cron invoking the Netlify Function.
-- Any external cron (e.g., cron job hitting the Express or Netlify endpoint).
+- GitHub Actions cron invoking the endpoint. Configure three repository secrets:
+  - `BASE_URL` (e.g., `https://<your-site>.netlify.app/.netlify/functions` or local tunnel)
+  - `USER_EMAIL` (recipient)
+  - `API_KEY` (must match your deployed `API_KEY`)
+- Any external cron (e.g., cron job hitting the Express or Netlify endpoint) must include the `x-api-key` header or `?api_key=` query param.
 
 ## Error Handling
 
 - RSS fetch: returns errors for unreachable/empty/invalid RSS data.
 - Email send: surfaces SMTP transport errors.
+- 401 Unauthorized when API key is missing or invalid.
 - The controller rethrows errors; check your logs (local console or Netlify logs) for details.
 
 ## API
 
 - Local (Express): `GET /notify?email=<recipient>`
   - Status: `200 OK` immediately after triggering send.
+  - Auth: Provide `x-api-key: <API_KEY>` header (or `?api_key=` query string).
   - Effect: Sends HTML email digest to `recipient`.
 
 - Netlify: `GET /.netlify/functions/notify?email=<recipient>`
   - Status: `200 OK` with string body on success.
+  - Auth: Provide `x-api-key: <API_KEY>` header (or `?api_key=` query string).
   - Effect: Sends HTML email digest to `recipient`.
 
 ## Project Scripts

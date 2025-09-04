@@ -14,5 +14,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: cURL request
         # Hit the webhook endpoint to rebuild  from the "main" branch
-        run: curl -X GET ${{ secrets.BASE_URL }}/notify?email=${{ secrets.USER_EMAIL }}
+        run: |
+          curl -sS -X GET \
+            -H "x-api-key: ${{ secrets.API_KEY }}" \
+            "${{ secrets.BASE_URL }}/notify?email=${{ secrets.USER_EMAIL }}"
       - uses: gautamkrishnar/keepalive-workflow@master # step to keep alive the cron action
