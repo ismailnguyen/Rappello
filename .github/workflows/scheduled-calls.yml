@@ -5,6 +5,7 @@ on:
   schedule:
     # Runs "everyday at 5:02pm" (see https://crontab.guru)
     - cron: '02 17 * * *'
+  workflow_dispatch: {}
 
 jobs:
   build:
