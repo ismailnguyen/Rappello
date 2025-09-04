@@ -25,7 +25,7 @@ Flow:
 
 ## Requirements
 
-- Node.js 16+ (14+ likely works, 16+ recommended).
+- Node.js 18+ (tested on Node 22).
 - SMTP credentials for a provider (e.g., Gmail, SMTP relay, etc.).
 
 ## Installation
