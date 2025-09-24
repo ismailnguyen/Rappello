@@ -106,9 +106,7 @@ function renderItemCard(item) {
         .map(part => part ? escapeHtml(part) : '')
         .filter(Boolean)
         .join(' · ');
-    const categoryChip = categoryLabel
-        ? `<span style="display:inline-block;padding:6px 12px;border-radius:999px;background:#F1F2F8;color:#524F7D;font-size:12px;font-weight:500;">${categoryLabel}</span>`
-        : '';
+   
 
     const arrowHtml = item.link
         ? `<a href="${link}" style="color:#1F1B5A;font-size:20px;line-height:20px;text-decoration:none;">&#8594;</a>`
@@ -128,7 +126,6 @@ function renderItemCard(item) {
             </table>
             <div style="margin-top:12px;">${titleHtml}</div>
             ${infoHtml}
-            ${categoryChip ? `<div style="margin-top:16px;">${categoryChip}</div>` : ''}
         </td>
         <td width="40" style="padding:16px 16px 16px 0;vertical-align:top;text-align:right;">${arrowHtml}</td>
     </tr>
