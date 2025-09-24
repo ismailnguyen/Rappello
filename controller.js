@@ -40,19 +40,6 @@ function escapeHtmlAttribute(value) {
         .replace(/'/g, '&#39;');
 }
 
-function formatItemDate(value) {
-    if (!value) {
-        return '';
-    }
-
-    const d = value instanceof Date ? value : new Date(value);
-    if (Number.isNaN(d.getTime())) {
-        return '';
-    }
-
-    return formatDateFR(d);
-}
-
 function toHtmlContent(value) {
     if (!value) {
         return '';
@@ -81,10 +68,6 @@ function renderItemCard(item) {
     const brandBadge = brandText
         ? `<span style="display:inline-block;background:#F7EAF3;color:#A14F9F;font-size:12px;font-weight:600;letter-spacing:0.4px;padding:4px 12px;border-radius:999px;text-transform:uppercase;">${brandText}</span>`
         : '';
-    const dateText = formatItemDate(item.pubDate);
-    const dateHtml = dateText
-        ? `<span style="font-size:12px;color:#8E8AA8;">${escapeHtml(dateText)}</span>`
-        : '';
     const titleText = escapeHtml(item.title || 'Rappel conso');
     const titleHtml = item.link
         ? `<a href="${link}" style="color:#1F1B5A;font-size:18px;line-height:24px;font-weight:700;text-decoration:none;">${titleText}</a>`
@@ -101,12 +84,6 @@ function renderItemCard(item) {
     const infoHtml = infoSections.length
         ? `<div style="margin-top:12px;">${infoSections.join('<div style="height:6px;font-size:6px;line-height:6px;">&nbsp;</div>')}</div>`
         : '';
-
-    const categoryLabel = [item.category, item.subCategory]
-        .map(part => part ? escapeHtml(part) : '')
-        .filter(Boolean)
-        .join(' · ');
-   
 
     const arrowHtml = item.link
         ? `<a href="${link}" style="color:#1F1B5A;font-size:20px;line-height:20px;text-decoration:none;">&#8594;</a>`
