@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-const API_URL = 'https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/rappelconso-v2-gtin-trie/records?where=date_publication%20%3E%20now(days%3D-1)&order_by=date_publication%20desc&limit=20'
+const API_URL = 'https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/rappelconso-v2-gtin-espaces/records?where=date_publication%20%3E%20now(days%3D-1)'
 
 function sanitizeString(value) {
     if (value === undefined || value === null) {
@@ -39,64 +39,6 @@ function extractFirstImageUrl(value) {
     return candidates.length ? candidates[0] : undefined;
 }
 
-function formatDescription(record) {
-    const sections = [];
-
-    const category = sanitizeString(record.categorie_produit);
-    const subCategory = sanitizeString(record.sous_categorie_produit);
-    const brand = sanitizeString(record.marque_produit);
-    const distributors = sanitizeString(record.distributeurs);
-    const risks = sanitizeString(record.risques_encourus);
-    const reason = sanitizeString(record.motif_rappel);
-    const instructions = normalizeInstructions(sanitizeString(record.conduites_a_tenir_par_le_consommateur));
-    const compensation = sanitizeString(record.modalites_de_compensation);
-    const contact = sanitizeString(record.numero_contact);
-    const extra = sanitizeString(record.informations_complementaires_publiques);
-    const pdfLink = sanitizeString(record.lien_vers_affichette_pdf);
-
-    if (category || subCategory) {
-        sections.push(`<b>Catégorie :</b> ${[category, subCategory].filter(Boolean).join(' / ')}`);
-    }
-
-    if (brand) {
-        sections.push(`<b>Marque :</b> ${brand}`);
-    }
-
-    if (distributors) {
-        sections.push(`<b>Distributeurs :</b> ${distributors}`);
-    }
-
-    if (reason) {
-        sections.push(`<b>Motif :</b> ${reason}`);
-    }
-
-    if (risks) {
-        sections.push(`<b>Risques :</b> ${risks}`);
-    }
-
-    if (instructions.length) {
-        sections.push(`<b>Consignes :</b> ${instructions.join(', ')}`);
-    }
-
-    if (compensation) {
-        sections.push(`<b>Compensation :</b> ${compensation}`);
-    }
-
-    if (contact) {
-        sections.push(`<b>Contact :</b> ${contact}`);
-    }
-
-    if (extra) {
-        sections.push(`<b>Informations complémentaires :</b> ${extra.replace(/¤/g, '<br>')}`);
-    }
-
-    if (pdfLink) {
-        sections.push(`<a href="${pdfLink}">Affichette PDF</a>`);
-    }
-
-    return sections.join('<br>');
-}
-
 exports.fetchApi = async function () {
     try {
         const res = await axios.get(API_URL);
@@ -122,12 +64,7 @@ exports.fetchApi = async function () {
             const category = sanitizeString(record.categorie_produit);
             const subCategory = sanitizeString(record.sous_categorie_produit);
             const brand = sanitizeString(record.marque_produit);
-            const risks = sanitizeString(record.risques_encourus);
             const reason = sanitizeString(record.motif_rappel);
-            const instructions = normalizeInstructions(sanitizeString(record.conduites_a_tenir_par_le_consommateur));
-            const compensation = sanitizeString(record.modalites_de_compensation);
-            const contact = sanitizeString(record.numero_contact);
-            const extraInfo = sanitizeString(record.informations_complementaires_publiques);
 
             const title = sanitizeString(record.libelle)
                 || sanitizeString(record.modeles_ou_references)
@@ -142,18 +79,12 @@ exports.fetchApi = async function () {
                     || title,
                 title,
                 link,
-                description: formatDescription(record),
                 pubDate: pubDate ? pubDate.toISOString() : undefined,
                 image,
                 brand,
                 category,
                 subCategory,
-                risks,
                 reason,
-                instructions,
-                compensation,
-                contact,
-                extraInfo
             };
         });
 

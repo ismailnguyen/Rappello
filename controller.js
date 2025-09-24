@@ -94,29 +94,8 @@ function renderItemCard(item) {
         : `<div style="width:120px;height:120px;border-radius:12px;background:#F1F2F8;"></div>`;
 
     const infoSections = [];
-    if (item.risks) {
-        infoSections.push(renderInfoLine('Risques', item.risks));
-    }
     if (item.reason) {
         infoSections.push(renderInfoLine('Motif', item.reason, true));
-    }
-    const instructionsText = Array.isArray(item.instructions)
-        ? item.instructions.join(', ')
-        : item.instructions;
-    if (instructionsText) {
-        infoSections.push(renderInfoLine('Consignes', instructionsText));
-    }
-    if (item.compensation) {
-        infoSections.push(renderInfoLine('Compensation', item.compensation));
-    }
-    if (item.contact) {
-        infoSections.push(renderInfoLine('Contact', item.contact));
-    }
-    if (item.extraInfo) {
-        infoSections.push(renderInfoLine('Informations complémentaires', item.extraInfo));
-    }
-    if (!infoSections.length && item.description) {
-        infoSections.push(`<div style="margin:0;font-size:14px;line-height:20px;color:#4A4666;">${toHtmlContent(item.description)}</div>`);
     }
 
     const infoHtml = infoSections.length
@@ -145,7 +124,6 @@ function renderItemCard(item) {
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;">
                 <tr>
                     <td style="vertical-align:top;">${brandBadge}</td>
-                    <td style="vertical-align:top;text-align:right;">${dateHtml}</td>
                 </tr>
             </table>
             <div style="margin-top:12px;">${titleHtml}</div>
