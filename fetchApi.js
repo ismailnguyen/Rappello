@@ -26,6 +26,19 @@ function normalizeInstructions(rawValue) {
         .filter(Boolean);
 }
 
+function extractFirstImageUrl(value) {
+    if (value === undefined || value === null) {
+        return undefined;
+    }
+
+    const candidates = String(value)
+        .split('|')
+        .map(entry => sanitizeString(entry))
+        .filter(Boolean);
+
+    return candidates.length ? candidates[0] : undefined;
+}
+
 function formatDescription(record) {
     const sections = [];
 
@@ -105,7 +118,7 @@ exports.fetchApi = async function () {
                 || sanitizeString(record.lien_vers_affichette_pdf)
                 || sanitizeString(record.lien_vers_la_liste_des_produits)
                 || undefined;
-            const image = sanitizeString(record.liens_vers_les_images);
+            const image = extractFirstImageUrl(record.liens_vers_les_images);
             const category = sanitizeString(record.categorie_produit);
             const subCategory = sanitizeString(record.sous_categorie_produit);
             const brand = sanitizeString(record.marque_produit);
@@ -140,24 +153,17 @@ exports.fetchApi = async function () {
                 instructions,
                 compensation,
                 contact,
-                extraInfo,
-                source: 'api'
+                extraInfo
             };
         });
 
         const contentTitle = totalCount ? `Derniers rappels (${totalCount})` : 'Derniers rappels';
 
-        const content = items.map(it => `
-                <a href="${ it.link || '#' }"><b>${ it.title }</b></a>:
-                <br>
-                ${ it.image ? `<img src="${ it.image }" alt="${ it.title }" style="max-width:100%;height:auto;" />
-                <br>
-                ` : '' }${ it.description }
-            `).join('<br><br>')
-
-        return { title: contentTitle, items, content };
+        return {
+            title: contentTitle,
+            items
+        };
     } catch (error) {
         throw error;
     }
 }
-
